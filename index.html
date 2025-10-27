@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GigSphere — Single File (HTML + CSS + JS)</title>
+<style>
+/* ---------- Unique Modern Design (inline) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+:root{--accent1:#ff6b6b;--accent2:#ee5a24;--accent3:#4ecdc4;--muted:#718096}
+*{box-sizing:border-box}
+body{
+  font-family:'Poppins',sans-serif;
+  margin:0;padding:0;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  color:#333;min-height:100vh;
+}
+.welcome-page,.register-page,.login-page,.dashboard{display:none;padding:20px;max-width:900px;margin:0 auto;animation:fadeIn .45s ease-in}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.welcome-page{display:block;text-align:center;background:rgba(255,255,255,0.92);border-radius:18px;padding:36px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.welcome-page h1{color:#4a5568;font-size:2.2em;margin-bottom:8px}
+.welcome-page p{font-size:1.05em;color:var(--muted);margin-bottom:18px}
+.btn{background:linear-gradient(45deg,var(--accent1),var(--accent2));color:#fff;padding:11px 20px;border:none;border-radius:25px;cursor:pointer;margin:8px;font-size:0.98em;font-weight:600;transition:transform .25s,box-shadow .25s;box-shadow:0 4px 14px rgba(255,107,107,.22)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 26px rgba(255,107,107,.28)}
+.btn-secondary{background:linear-gradient(45deg,var(--accent3),#44a08d)}
+form{background:rgba(255,255,255,.96);padding:22px;border-radius:14px;box-shadow:0 10px 26px rgba(0,0,0,.09);backdrop-filter:blur(6px)}
+input,select,textarea{width:100%;padding:10px;margin:8px 0;border:2px solid #e2e8f0;border-radius:10px;font-family:'Poppins',sans-serif;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent1);outline:none}
+.dashboard{display:flex;min-height:100vh}
+.sidebar{width:250px;background:linear-gradient(180deg,#2d3748 0%,#1a202c 100%);color:#fff;padding:18px 0;height:100vh;position:fixed;box-shadow:2px 0 12px rgba(0,0,0,.12)}
+.sidebar ul{list-style:none;padding:0;margin:0}
+.sidebar li{padding:14px 18px;cursor:pointer;transition:background .2s;border-left:3px solid transparent}
+.sidebar li:hover,.sidebar li.active{background:rgba(255,107,107,.13);border-left-color:var(--accent1)}
+.main-content{margin-left:250px;padding:26px;width:calc(100% - 250px);background:rgba(255,255,255,.94);min-height:100vh}
+.profile-img{width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid var(--accent1);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.gig-post,.review,.search-result{background:#fff;padding:16px;margin:12px 0;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);transition:transform .18s,box-shadow .18s}
+.gig-post:hover,.review:hover,.search-result:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(0,0,0,.12)}
+.chat-history{background:#f7fafc;padding:14px;margin:10px 0;border-radius:12px;height:380px;overflow:auto;border:1px solid #e2e8f0}
+.stars{color:#ddd;font-size:22px;margin:10px 0}
+.stars span{cursor:pointer;transition:color .18s}
+.stars span.filled{color:#ffd700}
+.payment-options{display:flex;gap:14px;flex-wrap:wrap}
+.hidden{display:none}
+#home-photo{width:100%;max-height:350px;object-fit:cover;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.chat-message{margin:10px 0;padding:10px 14px;border-radius:18px;max-width:70%;word-wrap:break-word}
+.chat-message.sent{background:linear-gradient(45deg,var(--accent1),var(--accent2));color:#fff;margin-left:auto;text-align:right}
+.chat-message.received{background:#e2e8f0;color:#333}
+.gig-file{max-width:120px;max-height:120px;margin:6px;border-radius:10px;object-fit:cover}
+.unique-badge{background:var(--accent1);color:#fff;padding:6px 10px;border-radius:14px;font-size:.85em;display:inline-block;margin:6px 0}
+.loading{display:inline-block;width:18px;height:18px;border:3px solid #f3f3f3;border-top:3px solid:var(--accent1);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@media (max-width:768px){.sidebar{width:100%;height:auto;position:relative}.main-content{margin-left:0;width:100%}.payment-options{flex-direction:column}}
+small{color:#6b7280}
+</style>
+</head>
+<body>
+  <!-- Welcome -->
+  <div id="welcome-page" class="welcome-page">
+    <h1>🌟 Welcome to GigSphere</h1>
+    <p>Your unique platform for seamless freelance connections and creative collaborations.</p>
+    <span class="unique-badge">Powered by AI Insights</span><br>
+    <button class="btn" onclick="showRegister()">🚀 Register</button>
+    <button class="btn btn-secondary" onclick="showLogin()">🔑 Login</button>
+  </div>
+
+  <!-- Register -->
+  <div id="register-page" class="register-page">
+    <h2>🎉 Join GigSphere</h2>
+    <form id="register-form">
+      <input type="text" id="reg-name" placeholder="Full Name" required>
+      <input type="email" id="reg-email" placeholder="Email Address" required>
+      <input type="tel" id="reg-phone" placeholder="Phone Number" required>
+      <input type="file" id="reg-photo" accept="image/*" required>
+      <input type="date" id="reg-dob" required>
+      <select id="reg-type" required>
+        <option value="">Choose Your Role</option>
+        <option value="freelancer">🎨 Freelancer</option>
+        <option value="client">💼 Client</option>
+      </select>
+      <input type="password" id="reg-password" placeholder="Secure Password" required>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+    <button class="btn btn-secondary" onclick="showWelcome()">← Back</button>
+  </div>
+
+  <!-- Login -->
+  <div id="login-page" class="login-page">
+    <h2>🔐 Login to GigSphere</h2>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email Address" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit" class="btn">Sign In</button>
+    </form>
+    <button class="btn btn-secondary" onclick="showWelcome()">← Back</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="dashboard hidden">
+    <div class="sidebar">
+      <ul>
+        <li onclick="showSection('home')">🏠 Home</li>
+        <li onclick="showSection('profile')">👤 Profile</li>
+        <li onclick="showSection('gig-post')">📝 Gig Post</li>
+        <li onclick="showSection('user-search')">🔍 User Search</li>
+        <li onclick="showSection('chat')">💬 Chat</li>
+        <li onclick="showSection('review')">⭐ Reviews</li>
+        <li onclick="showSection('payment')">💳 Payment</li>
+        <li onclick="logout()">🚪 Logout</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <!-- Home -->
+      <div id="home-section">
+        <h2>🌟 Welcome Back, <span id="home-user-name"></span>!</h2>
+        <p>Discover unique gigs and connect with top talent. Your freelance journey starts here.</p>
+        <img id="home-photo" src="https://via.placeholder.com/800x400/ff6b6b/ffffff?text=Unique+Gig+Connections" alt="Hero">
+        <div class="unique-badge">Pro Tip: Post a gig today and get AI-matched freelancers!</div>
+      </div>
+
+      <!-- Profile -->
+      <div id="profile-section" class="hidden">
+        <h2>👤 Your Profile</h2>
+        <img id="profile-photo" class="profile-img" src="" alt="Profile Photo">
+        <p><strong>Name:</strong> <span id="profile-name"></span></p>
+        <p><strong>Email:</strong> <span id="profile-email"></span></p>
+        <p><strong>Phone:</strong> <span id="profile-phone"></span></p>
+        <p><strong>Type:</strong> <span id="profile-type"></span></p>
+        <p><strong>DOB:</strong> <span id="profile-dob"></span></p>
+        <button class="btn" onclick="editProfile()">✏️ Edit Profile</button>
+        <div id="edit-profile-form" class="hidden">
+          <form id="edit-form">
+            <input type="text" id="edit-name" placeholder="Name">
+            <input type="email" id="edit-email" placeholder="Email">
+            <input type="tel" id="edit-phone" placeholder="Phone">
+            <input type="file" id="edit-photo" accept="image/*">
+            <input type="date" id="edit-dob">
+            <button type="submit" class="btn">💾 Save Changes</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Gig Post -->
+      <div id="gig-post-section" class="hidden">
+        <h2>📝 Post a Unique Gig</h2>
+        <form id="gig-form">
+          <textarea id="gig-description" placeholder="Describe your gig uniquely..." required></textarea>
+          <input type="file" id="gig-file" accept="image/*,video/*,audio/*,.pdf" multiple>
+          <button type="submit" class="btn">🚀 Post Gig</button>
+        </form>
+        <div id="gigs-list"></div>
+      </div>
+
+      <!-- User Search -->
+      <div id="user-search-section" class="hidden">
+        <h2>🔍 Search Users</h2>
+        <input type="text" id="search-input" placeholder="Search by name or skills..." oninput="searchUsers()">
+        <div id="search-results"></div>
+      </div>
+
+      <!-- Chat -->
+      <div id="chat-section" class="hidden">
+        <h2>💬 Live Chat</h2>
+        <select id="chat-user-select" onchange="loadChat()">
+          <option value="">Select a User</option>
+        </select>
+        <div id="chat-history" class="chat-history"></div>
+        <input type="text" id="chat-message" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+        <button class="btn" onclick="sendMessage()">📤 Send</button>
+        <button class="btn btn-secondary" onclick="startCall()">📞 Audio Call</button>
+        <button class="btn btn-secondary" onclick="startVideoCall()">📹 Video Call</button>
+      </div>
+
+      <!-- Review -->
+      <div id="review-section" class="hidden">
+        <h2>⭐ Leave a Review</h2>
+        <select id="review-user-select" onchange="loadReviews()">
+          <option value="">Select User</option>
+        </select>
+        <div class="stars" id="star-rating">
+          <span onclick="setStars(1)">★</span>
+          <span onclick="setStars(2)">★</span>
+          <span onclick="setStars(3)">★</span>
+          <span onclick="setStars(4)">★</span>
+          <span onclick="setStars(5)">★</span>
+        </div>
+        <textarea id="review-text" placeholder="Share your unique experience..."></textarea>
+        <button class="btn" onclick="submitReview()">📝 Submit Review</button>
+        <div id="reviews-list"></div>
+      </div>
+
+      <!-- Payment -->
+      <div id="payment-section" class="hidden">
+        <h2>💳 Secure Payments</h2>
+        <div class="payment-options">
+          <button class="btn" onclick="showCardForm()">💳 Credit Card</button>
+          <button class="btn btn-secondary" onclick="showUPI()">📱 UPI</button>
+        </div>
+        <div id="card-form" class="hidden">
+          <form id="card-pay-form">
+            <input type="text" placeholder="Card Number (**** **** **** ****)" required>
+            <input type="text" placeholder="Expiry (MM/YY)" required>
+            <input type="text" placeholder="CVV" required>
+            <button type="submit" class="btn">💰 Process Payment</button>
+          </form>
+        </div>
+        <div id="upi-form" class="hidden">
+          <p>Choose Your UPI App:</p>
+          <button class="btn" onclick="openUPI('GPay')">Google Pay</button>
+          <button class="btn btn-secondary" onclick="openUPI('PhonePe')">PhonePe</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/* ---------- JavaScript (inline) ---------- */
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+let gigs = JSON.parse(localStorage.getItem('gigs')) || [];
+let chats = JSON.parse(localStorage.getItem('chats')) || {};
+let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+let currentRating = 0;
+let selectedChatUser = null;
+
+function persist(){ localStorage.setItem('users', JSON.stringify(users)); localStorage.setItem('gigs', JSON.stringify(gigs)); localStorage.setItem('chats', JSON.stringify(chats)); localStorage.setItem('reviews', JSON.stringify(reviews)); localStorage.setItem('currentUser', JSON.stringify(currentUser)); }
+function byId(id){ return document.getElementById(id); }
+function formatDateISO(dateStr){ if(!dateStr) return ''; try{return new Date(dateStr).toLocaleDateString();}catch(e){return dateStr} }
+function escapeHtml(text){ if(!text) return ''; return text.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* Navigation */
+function showWelcome(){ byId('welcome-page').style.display='block'; byId('register-page').style.display='none'; byId('login-page').style.display='none'; byId('dashboard').classList.add('hidden'); }
+function showRegister(){ byId('welcome-page').style.display='none'; byId('register-page').style.display='block'; byId('login-page').style.display='none'; byId('dashboard').classList.add('hidden'); }
+function showLogin(){ byId('welcome-page').style.display='none'; byId('register-page').style.display='none'; byId('login-page').style.display='block'; byId('dashboard').classList.add('hidden'); }
+function showDashboard(){ byId('welcome-page').style.display='none'; byId('register-page').style.display='none'; byId('login-page').style.display='none'; byId('dashboard').classList.remove('hidden'); showSection('home'); renderSidebarActive('home'); refreshAll(); }
+function logout(){ currentUser=null; persist(); showWelcome(); alert('Logged out'); }
+
+function renderSidebarActive(section){ document.querySelectorAll('.sidebar li').forEach(li=>li.classList.remove('active')); const map={home:0,profile:1,'gig-post':2,'user-search':3,chat:4,review:5,payment:6}; const idx=map[section]; if(idx!==undefined) document.querySelectorAll('.sidebar li')[idx].classList.add('active'); }
+function showSection(section){ ['home-section','profile-section','gig-post-section','user-search-section','chat-section','review-section','payment-section'].forEach(id=>byId(id).classList.add('hidden')); if(section==='home'){ byId('home-section').classList.remove('hidden'); renderSidebarActive('home'); } else if(section==='profile'){ byId('profile-section').classList.remove('hidden'); renderSidebarActive('profile'); loadProfile(); } else if(section==='gig-post'){ byId('gig-post-section').classList.remove('hidden'); renderSidebarActive('gig-post'); renderGigs(); } else if(section==='user-search'){ byId('user-search-section').classList.remove('hidden'); renderSidebarActive('user-search'); populateUserSearch(); } else if(section==='chat'){ byId('chat-section').classList.remove('hidden'); renderSidebarActive('chat'); populateChatSelects(); } else if(section==='review'){ byId('review-section').classList.remove('hidden'); renderSidebarActive('review'); populateReviewSelect(); renderReviewsList(); } else if(section==='payment'){ byId('payment-section').classList.remove('hidden'); renderSidebarActive('payment'); } }
+
+/* Registration */
+byId('register-form').addEventListener('submit', function(e){ e.preventDefault(); const name = byId('reg-name').value.trim(); const email = byId('reg-email').value.trim().toLowerCase(); const phone = byId('reg-phone').value.trim(); const photoInput = byId('reg-photo'); const dob = byId('reg-dob').value; const type = byId('reg-type').value; const password = byId('reg-password').value; if(users.find(u=>u.email===email)){ alert('Email already registered. Please login.'); showLogin(); return; } if(!photoInput.files || !photoInput.files[0]){ alert('Upload a photo'); return; } const reader = new FileReader(); reader.onload = function(evt){ const user = { id:'u_'+Date.now(), name, email, phone, photo:evt.target.result, dob, type, password, createdAt:new Date().toISOString() }; users.push(user); currentUser=user; persist(); alert('Account created & logged in!'); showDashboard(); }; reader.readAsDataURL(photoInput.files[0]); });
+
+/* Login */
+byId('login-form').addEventListener('submit', function(e){ e.preventDefault(); const email = byId('login-email').value.trim().toLowerCase(); const password = byId('login-password').value; const user = users.find(u=>u.email===email && u.password===password); if(!user){ alert('Invalid credentials'); return; } currentUser=user; persist(); showDashboard(); alert('Welcome back, ' + currentUser.name + '!'); });
+
+/* Profile */
+function loadProfile(){ if(!currentUser) return; byId('profile-photo').src = currentUser.photo || 'https://via.placeholder.com/120'; byId('profile-name').textContent = currentUser.name || ''; byId('profile-email').textContent = currentUser.email || ''; byId('profile-phone').textContent = currentUser.phone || ''; byId('profile-type').textContent = currentUser.type || ''; byId('profile-dob').textContent = formatDateISO(currentUser.dob) || ''; }
+function editProfile(){ if(!currentUser) return; byId('edit-profile-form').classList.remove('hidden'); byId('edit-name').value = currentUser.name || ''; byId('edit-email').value = currentUser.email || ''; byId('edit-phone').value = currentUser.phone || ''; byId('edit-dob').value = currentUser.dob || ''; }
+byId('edit-form').addEventListener('submit', function(e){ e.preventDefault(); const name = byId('edit-name').value.trim(); const email = byId('edit-email').value.trim().toLowerCase(); const phone = byId('edit-phone').value.trim(); const photoInput = byId('edit-photo'); const dob = byId('edit-dob').value; if(email !== currentUser.email && users.find(u=>u.email===email)){ alert('Email already taken'); return; } currentUser.name = name || currentUser.name; currentUser.email = email || currentUser.email; currentUser.phone = phone || currentUser.phone; currentUser.dob = dob || currentUser.dob; if(photoInput.files && photoInput.files[0]){ const reader = new FileReader(); reader.onload = function(evt){ currentUser.photo = evt.target.result; finalize(); }; reader.readAsDataURL(photoInput.files[0]); } else finalize(); function finalize(){ users = users.map(u => u.id === currentUser.id ? currentUser : u); persist(); byId('edit-profile-form').classList.add('hidden'); loadProfile(); alert('Profile updated'); } });
+
+/* Gigs */
+byId('gig-form').addEventListener('submit', function(e){ e.preventDefault(); if(!currentUser){ alert('Please login'); return; } const desc = byId('gig-description').value.trim(); const files = byId('gig-file').files; const gig = { id:'g_'+Date.now(), userId: currentUser.id, desc, files:[], createdAt:new Date().toISOString() }; if(files && files.length){ let loaded=0; for(let i=0;i<files.length;i++){ const f = files[i]; const reader=new FileReader(); reader.onload = function(evt){ gig.files.push({name:f.name,type:f.type,data:evt.target.result}); loaded++; if(loaded===files.length){ gigs.unshift(gig); persist(); renderGigs(); byId('gig-form').reset(); alert('Gig posted!'); } }; reader.readAsDataURL(f); } } else { gigs.unshift(gig); persist(); renderGigs(); byId('gig-form').reset(); alert('Gig posted!'); } });
+function renderGigs(){ const container = byId('gigs-list'); container.innerHTML=''; if(gigs.length===0) container.innerHTML = '<p>No gigs yet — post the first!</p>'; gigs.forEach(g=>{ const author = users.find(u=>u.id===g.userId) || {name:'Unknown',photo:''}; const div = document.createElement('div'); div.className='gig-post'; div.innerHTML = `<div style="display:flex;gap:12px;align-items:center"><img src="${author.photo||'https://via.placeholder.com/80'}" style="width:56px;height:56px;border-radius:8px;object-fit:cover"/><div><strong>${author.name}</strong><br><small>${new Date(g.createdAt).toLocaleString()}</small></div></div><p style="margin-top:10px">${escapeHtml(g.desc)}</p>`; if(g.files && g.files.length){ const wrap = document.createElement('div'); wrap.style.display='flex'; wrap.style.flexWrap='wrap'; g.files.forEach(f=>{ const el=document.createElement('img'); el.src=f.data; el.className='gig-file'; el.title=f.name; wrap.appendChild(el); }); div.appendChild(wrap); } container.appendChild(div); }); }
+
+/* Search */
+function searchUsers(){ const q = byId('search-input').value.trim().toLowerCase(); const container = byId('search-results'); container.innerHTML=''; const list = users.filter(u => u.name.toLowerCase().includes(q) || (u.type && u.type.toLowerCase().includes(q)) || (u.email && u.email.includes(q))); if(list.length===0) container.innerHTML = '<p>No users found</p>'; list.forEach(u=>{ const div = document.createElement('div'); div.className='search-result'; div.innerHTML = "<img src='"+(u.photo||'https://via.placeholder.com/60')+"' style='width:60px;height:60px;border-radius:10px;object-fit:cover;float:left;margin-right:10px'/>"+"<div><strong>"+u.name+"</strong><br><small>"+(u.type||'')+"</small><br><small>"+(u.email||'')+"</small></div>"; div.onclick = ()=>{ alert('Open profile (mock) for '+u.name); }; container.appendChild(div); }); }
+function populateUserSearch(){ byId('search-input').value=''; searchUsers(); }
+
+/* Chat (local) */
+function populateChatSelects(){ const sel = byId('chat-user-select'); sel.innerHTML = '<option value="">Select a User</option>'; users.filter(u=>u.id!==currentUser.id).forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.name+' ('+(u.type||'')+')'; sel.appendChild(o); }); loadChat(); }
+function loadChat(){ const otherId = byId('chat-user-select').value; selectedChatUser = otherId||null; const history = byId('chat-history'); history.innerHTML=''; if(!selectedChatUser){ history.innerHTML = '<p>Select a user to view chat</p>'; return; } const key = chatKey(currentUser.id, selectedChatUser); const msgs = chats[key] || []; msgs.forEach(m=>{ const div=document.createElement('div'); div.className='chat-message '+(m.sender===currentUser.id ? 'sent' : 'received'); div.textContent=m.text; history.appendChild(div); }); history.scrollTop = history.scrollHeight; }
+function handleKeyPress(e){ if(e.key==='Enter') sendMessage(); }
+function sendMessage(){ const text = byId('chat-message').value.trim(); if(!text) return; if(!selectedChatUser){ alert('Select a user'); return; } const key = chatKey(currentUser.id, selectedChatUser); if(!chats[key]) chats[key]=[]; const msg = { sender: currentUser.id, text, at:new Date().toISOString() }; chats[key].push(msg); persist(); byId('chat-message').value=''; loadChat(); }
+function chatKey(a,b){ return [a,b].sort().join('__'); }
+function startCall(){ alert('Audio call (mock) — integrate WebRTC to enable real calls'); }
+function startVideoCall(){ alert('Video call (mock) — integrate WebRTC to enable real video'); }
+
+/* Reviews */
+function populateReviewSelect(){ const sel = byId('review-user-select'); sel.innerHTML = '<option value="">Select User</option>'; users.filter(u=>u.id!==currentUser.id).forEach(u=>{ const o=document.createElement('option'); o.value=u.id; o.textContent=u.name; sel.appendChild(o); }); }
+function setStars(n){ currentRating=n; const spans = byId('star-rating').querySelectorAll('span'); spans.forEach((s,i)=>s.classList.toggle('filled', i < n)); }
+function submitReview(){ const to = byId('review-user-select').value; const text = byId('review-text').value.trim(); if(!to){ alert('Select a user to review'); return; } if(currentRating===0){ alert('Select rating'); return; } const r = { id:'r_'+Date.now(), from:currentUser.id, to, rating:currentRating, text, at:new Date().toISOString() }; reviews.unshift(r); persist(); byId('review-text').value=''; setStars(0); renderReviewsList(); alert('Review submitted'); }
+function loadReviews(){ renderReviewsList(); }
+function renderReviewsList(){ const c = byId('reviews-list'); c.innerHTML=''; if(reviews.length===0){ c.innerHTML='<p>No reviews yet</p>'; return; } reviews.forEach(rv=>{ const from = users.find(u=>u.id===rv.from)||{name:'Unknown'}; const to = users.find(u=>u.id===rv.to)||{name:'Unknown'}; const d=document.createElement('div'); d.className='review'; d.innerHTML="<strong>"+from.name+"</strong> → <strong>"+to.name+"</strong><br>Rating: "+rv.rating+" / 5<br>"+escapeHtml(rv.text)+"<br><small>"+new Date(rv.at).toLocaleString()+"</small>"; c.appendChild(d); }); }
+
+/* Payments (mock) */
+function showCardForm(){ byId('card-form').classList.remove('hidden'); byId('upi-form').classList.add('hidden'); }
+function showUPI(){ byId('card-form').classList.add('hidden'); byId('upi-form').classList.remove('hidden'); }
+document.addEventListener('submit', function(e){ if(e.target && e.target.id==='card-pay-form'){ e.preventDefault(); alert('Payment processed (mock). For production integrate a payment gateway.'); } });
+function openUPI(app){ alert(app + ' opened (mock). Integrate real UPI SDK/deep-links for production.'); }
+
+/* Misc */
+function refreshAll(){ byId('home-user-name').textContent = currentUser ? currentUser.name : ''; renderGigs(); if(currentUser){ populateChatSelects(); populateReviewSelect(); populateUserSearch(); renderReviewsList(); } }
+
+/* On load */
+window.addEventListener('load', function(){ if(currentUser){ showDashboard(); } else showWelcome(); });
+</script>
+</body>
+</html>
